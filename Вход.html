@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход на сайт</title>
+    
+    <!-- Подключаем внешний CSS файл -->
+    <link rel="stylesheet" href="styleВход.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Здарова</h1>
+        <form id="loginForm">
+            <div class="input-container">
+                <label for="username">Логин:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="input-container">
+                <label for="password">Пароль:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit">Войти</button>
+        </form>
+
+        <div id="message"></div>
+    </div>
+
+    <!-- Подключаем внешний JavaScript файл -->
+    <script src="Вход.js"></script>
+</body>
+</html>
