@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management App</title>
+    <link rel="stylesheet" href="СтильCRMНорм.css"> <!-- Подключение CSS -->
+</head>
+<body>
+    <style>
+        /* Добавляем стили для выделения кнопок */
+        .menu-item.selected {
+            border: 2px solid white;
+        }
+
+        .workspace {
+            display: none; /* Скрываем рабочую область по умолчанию */
+            background: rgb(41, 41, 41);
+            border-radius: 30px;
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+            width: 1000px;
+            height: 500px;
+            position: relative; /* Для абсолютного позиционирования кнопки */
+        }
+        .block{
+            display: none; /* Скрываем рабочую область по умолчанию */
+            background: rgb(41, 41, 41);
+            border-radius: 30px;
+            padding: 20px;
+            margin-top: 20px;
+            color: white;
+            width: 200px;
+            
+            position: relative;}
+
+    </style>
+
+    <div class="task-management">
+        <div class="main-wrapper">
+            <header class="header-container">
+                <div class="user-profile">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/43c6a1163eb0f237b3ff52388dd9b091809f9d3d1c7fcb3c48c1862fc5f686ee?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="Company Logo" class="profile-logo" />
+                    <div class="account-wrapper">
+                        <div class="account-name">Account_name</div>
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c8fd666ff4862806f97c211c64a73711a5b7fa335f734a99da4c8e34ecceda8c?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="User Profile Picture" class="profile-image" />
+                    </div>
+                </div>
+                <button class="logout-btn">log out</button>
+            </header>
+
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <div class="search-input-wrapper">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/144dd29479ea7016866bb34716d815af5e64e5cd6af5852555147d64f457cbc4?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="" class="search-icon" />
+                        <label for="searchInput" class="visually-hidden">Search tasks</label>
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search..." />
+                    </div>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f6176ae60de2cb2ace3fb174b53242c95e233979f8143a3ad9b0a0ec819e2f97?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="Filter" class="filter-icon" />
+                </div>
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/a09b2fa2604061ceafaff9e1c7246bab687223488d78e00998aa344e3dfb6e33?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="Sort" class="sort-icon" />
+            </div>
+
+            <div class="content-container">
+                <aside class="sidebar">
+                    <nav class="sidebar-menu">
+                        <div class="menu-items">
+                            <div class="menu-item" tabindex="0" role="button" onclick="selectMenuItem(this)">
+                                <span class="menu-text">Add task</span>
+                                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/7d9bc3f2c8c6da7cf12872de035218ab520d46457221caa2be8046394504b6eb?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="" class="menu-icon" />
+                            </div>
+                            <div class="menu-item" tabindex="0" role="button" onclick="selectMenuItem(this)">
+                                <span class="menu-text">Remove task</span>
+                                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/32cf6e18bd6fb6d812253d126fb1173b51ab1dff8b10095db811a43d9dafb7c3?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="" class="menu-icon" />
+                                
+                            </div>
+                            <div class="menu-item" tabindex="0" role="button" onclick="selectMenuItem(this)">
+                                <span class="menu-text">Edit task</span>
+                                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c068c2415ba7566bb8c9caf19ea8ee0081a15474b404328bddc84f72d70070f3?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="" class="menu-icon" />
+                            </div>
+                            <div class="menu-item" tabindex="0" role="button" onclick="selectMenuItem(this)">
+                                <span class="menu-text">View tasks</span>
+                                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/47c0a21ca93319ac7680d5c0df182c41bbf972b7abdc248c141d2e1d5592a6d7?placeholderIfAbsent=true&apiKey=8a87081e029c48129e47ce830225967e" alt="" class="menu-icon" />
+                            </div>
+                        </div>
+                    </nav>
+                </aside>
+
+                <!-- Рабочая область -->
+                <main class="main-content">
+                    <div id='workspace' class='workspace'></div>
+                </main>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипт для управления выделением кнопок и отображением рабочей области -->
+    <script>
+        
+        
+        function selectMenuItem(selectedItem) {
+            // Удаляем выделение с предыдущих кнопок
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.classList.remove('selected');
+            });
+
+            // Добавляем выделение к текущей кнопке
+            selectedItem.classList.add('selected');
+
+            // Отображаем рабочую область только при выборе "Add task"
+            const workspace = document.getElementById('workspace');
+            if (selectedItem.textContent.trim() === 'Add task') {
+                workspace.style.display = 'block';
+                workspace.innerHTML = `
+                    <article class='task-card'>
+                        <div class='task-header'>
+                            <!-- Поле ID -->
+                            <input type='text' id='task-id' placeholder='ID' value='' class='task-id' />
+                            
+                            <!-- Поле Name -->
+                            <input type='text' id='task-name' placeholder='Name' value='' class='task-name' />
+
+                            <!-- Поле Deadline -->
+                            <input type='date' id='task-deadline' placeholder='Deadline' value='' class='task-deadline' />
+
+                            <!-- Поле Priority с выпадающим списком -->
+                            <select id='task-priority' class='task-priority'>
+                                <option value='easy'>Easy</option>
+                                <option value='medium'>Medium</option>
+                                <option value='hard'>Hard</option>
+                            </select>
+
+                            <!-- Поле Status с выпадающим списком -->
+                            <select id='task-status' class='task-status'>
+                                <option value='completed'>Completed</option>
+                                <option value='in-progress'>In Progress</option>
+                            </select>
+
+                            <!-- Поле User с выпадающим списком -->
+                            <select id='task-user' class='task-user'>
+                                <!-- Здесь можно добавить пользователей -->
+                                <!-- Пример пользователей -->
+                                <option value='user1'>User 1</option>
+                                <option value='user2'>User 2</option>
+                                <!-- Добавьте больше пользователей по мере необходимости -->
+                            </select>
+
+                            <!-- Кнопка для добавления задачи -->
+                            <button id='add-task-btn' onclick='addTask()' class='add-task-btn'>Add task</button>
+                        </div>
+
+                        <!-- Поле описания задачи -->
+                        <textarea id='task-description' placeholder='Description...' rows='4' cols='50' style='border-radius: 20px; background-color: rgba(47, 66, 155, 0.5); margin-top: 16px; font-weight: 500; line-height: 28px; padding: 5px 12px;'></textarea>
+                    </article>`;
+            } 
+
+        
+             else if (selectedItem.textContent.trim() === 'Remove task') {
+                workspace.style.display = 'block';
+                workspace.innerHTML = '';
+            }
+            else if (selectedItem.textContent.trim() === 'Edit task')
+                 {
+                workspace.style.display = 'block';
+                workspace.innerHTML = '';
+            }
+            else if (selectedItem.textContent.trim() === 'View tasks')
+                 {
+                workspace.style.display = 'block';
+                workspace.innerHTML = '';
+            }
+            
+            else {
+                workspace.style.display = 'none'; // Скрываем рабочую область для других кнопок
+            }
+        
+
+        function removeTask() {
+            const taskIdToRemove = document.getElementById('remove-task-id').value;
+
+            // Здесь вы можете отправить запрос на сервер для удаления задачи
+            console.log(`Removing task with ID: ${taskIdToRemove}`);
+
+            // Очистка поля после удаления задачи (по желанию)
+            document.getElementById('workspace').innerHTML = ''; // Очищаем рабочую область
+        }
+    
+        }
+
+        function addTask() {
+            const taskId = document.getElementById('task-id').value;
+            const taskName = document.getElementById('task-name').value;
+            const taskDeadline = document.getElementById('task-deadline').value;
+            const taskPriority = document.getElementById('task-priority').value;
+            const taskStatus = document.getElementById('task-status').value;
+            const taskUser = document.getElementById('task-user').value;
+            const taskDescription = document.getElementById('task-description').value;
+
+            
+
+    // Создание объекта с данными задачи
+    const taskData = {
+        id: taskId,
+        name: taskName,
+        deadline: taskDeadline,
+        priority: taskPriority,
+        status: taskStatus,
+        user: taskUser,
+        description: taskDescription
+    };
+
+    // Отправка данных на сервер
+    fetch('https://your-server-url.com/api/tasks', { // Замените URL на нашу ссылку на сервер 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(taskData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // Здесь можно добавить код для обработки успешного ответа, например, очистка полей формы
+        clearForm();
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+// Функция для очистки полей формы после отправки
+function clearForm() {
+    document.getElementById('task-id').value = '';
+    document.getElementById('task-name').value = '';
+    document.getElementById('task-deadline').value = '';
+    document.getElementById('task-priority').value = 'easy'; // Установить значение по умолчанию
+    document.getElementById('task-status').value = 'completed'; // Установить значение по умолчанию
+    document.getElementById('task-user').value = 'user1'; // Установить значение по умолчанию
+    document.getElementById('task-description').value = '';
+}
+
+
+            // Очистка полей после добавления задачи (по желанию)
+            document.getElementById('workspace').innerHTML = ''; // Очищаем рабочую область
+        
+    </script>
+
+</body>
+</html>
